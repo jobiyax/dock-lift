@@ -1,0 +1,24 @@
+# Fichiers compilés
+*.exe
+*.dll
+*.so
+*.dylib
+
+# Binaire généré
+dock-lift
+
+# Dossiers Go
+/bin/
+/pkg/
+
+# Fichiers temporaires
+*.log
+*.tmp
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
