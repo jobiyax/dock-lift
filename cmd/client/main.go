@@ -4,17 +4,27 @@ import (
 	"fmt"
 	"log"
 
+	"dock-lift-cli/config"
 	"dock-lift-cli/internal/network"
 )
 
 func main() {
-	// Connexion au serveur local
-	message, err := network.Connect("localhost:9090")
-	// Gestion d'erreur
+	// Chargement de la configuration
+	cfg, err := config.LoadConfig("config.json")
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	// Affichage du message reçu
+	// Récupération de l'adresse
+	address := cfg.GetAddress()
+
+	// Tentative de connexion
+	message, err := network.Connect(address)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	// Affichage des informations de connexion
+	fmt.Println("Connecté à :", address)
 	fmt.Println(message)
 }
