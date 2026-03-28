@@ -1,0 +1,14 @@
+# Binaries
+/bin/
+/*.exe
+*.test
+
+# Dependencies
+/vendor/
+
+# Environment variables
+.env
+
+# IDE/editor files
+.vscode/
+.idea/
