@@ -9,16 +9,18 @@ import (
 func main() {
 	app := fiber.New()
 
-	// Route racine
 	app.Get("/", func(c fiber.Ctx) error {
 		return c.SendString("Dock Lift API 🚀")
 	})
 
-	// Groupement et routes API
 	api := app.Group("/api")
 
-	project.RegisterRoutes(api)
+	// Initialisation service et handler
+	service := project.NewService()
+	handler := project.NewHandler(service)
 
-	// Démarrage port 9000
+	handler.RegisterRoutes(api)
+
+	// Lancement du serveur
 	app.Listen(":9000")
 }

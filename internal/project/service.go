@@ -1,25 +1,62 @@
 package project
 
-import "time"
+import (
+	"os"
+	"path/filepath"
+	"strings"
+	"sync"
+	"time"
+)
 
-// Stockage et ID global
-var projects []Project
-var currentID = 1
+// Gestion du service et de la concurrence
+type Service struct {
+	projects  []Project
+	currentID int
+	mu        sync.Mutex
+}
 
-func Create(name string) Project {
+func NewService() *Service {
+	return &Service{
+		projects:  []Project{},
+		currentID: 1,
+	}
+}
+
+func (s *Service) Create(name string) (Project, error) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+
+	folderName := sanitizeName(name)
+
 	project := Project{
-		ID:        currentID,
+		ID:        s.currentID,
 		Name:      name,
 		CreatedAt: time.Now(),
 	}
 
-	currentID++
-	// Ajout à la liste
-	projects = append(projects, project)
+	// Création du dossier de stockage
+	path := filepath.Join("storage", folderName)
+	err := os.MkdirAll(path, os.ModePerm)
+	if err != nil {
+		return Project{}, err
+	}
 
-	return project
+	s.currentID++
+	s.projects = append(s.projects, project)
+
+	return project, nil
 }
 
-func GetAll() []Project {
-	return projects
+func (s *Service) GetAll() []Project {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+
+	return s.projects
+}
+
+// Formatage du nom de dossier
+func sanitizeName(name string) string {
+	name = strings.ToLower(name)
+	name = strings.ReplaceAll(name, " ", "_")
+	return name
 }
